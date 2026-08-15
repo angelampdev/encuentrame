@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ mascota['animal']|capitalize }} en {{ mascota['ciudad'] }} — Encuéntrame{% endblock %}
+
+{% block content %}
+<div class="detalle-container">
+  <a href="{{ url_for('index') }}" class="back-link">← Volver</a>
+
+  <div class="detalle-card">
+    {% if mascota['foto'] %}
+      <img class="detalle-foto" src="{{ url_for('static', filename='uploads/' + mascota['foto']) }}" alt="Foto">
+    {% else %}
+      <div class="no-foto no-foto-lg">{{ '🐶' if mascota['animal'] == 'perro' else '🐱' }}</div>
+    {% endif %}
+
+    <div class="detalle-info">
+      <div class="detalle-badges">
+        {% if mascota['estado'] == 'encontrado' %}
+          <span class="badge badge-encontrado">✓ ¡Ya fue encontrado!</span>
+        {% elif mascota['tipo'] == 'perdido' %}
+          <span class="badge badge-perdido">Perdido</span>
+        {% else %}
+          <span class="badge badge-divagando">🏠 Buscamos su familia</span>
+        {% endif %}
+        <span class="badge badge-animal">{{ '🐶 Perro' if mascota['animal'] == 'perro' else '🐱 Gato' }}</span>
+      </div>
+
+      <h1>{{ mascota['animal']|capitalize }} en {{ mascota['ciudad'] }}</h1>
+      <p class="detalle-fecha">Reportado el {{ mascota['fecha'] }}</p>
+
+      <h2>Descripción</h2>
+      <p>{{ mascota['descripcion'] }}</p>
+
+      <h2>Contacto</h2>
+      <p class="detalle-contacto">
+        <a href="https://wa.me/57{{ mascota['contacto']|replace(' ', '') }}" target="_blank" class="btn btn-whatsapp">
+          📱 Escribir por WhatsApp
+        </a>
+        <span class="contacto-num">{{ mascota['contacto'] }}</span>
+      </p>
+
+      {% if mascota['estado'] == 'encontrado' and mascota['desc_cierre'] %}
+        <div class="cierre-box">
+          <h2>¿Cómo fue el reencuentro?</h2>
+          <p>{{ mascota['desc_cierre'] }}</p>
+        </div>
+      {% endif %}
+
+      {% if mascota['estado'] == 'activo' %}
+        <div class="encontrado-form">
+          <h2>¿Ya fue encontrado?</h2>
+          <p>Si esta mascota ya fue encontrada, ayúdanos a actualizar el reporte.</p>
+          <form method="post" action="{{ url_for('marcar_encontrado', id=mascota['id']) }}">
+            <textarea name="desc_cierre" rows="3"
+              placeholder="Cuéntanos cómo fue el reencuentro (opcional)..."></textarea>
+            <button type="submit" class="btn btn-success">✓ Marcar como encontrado</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

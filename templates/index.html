@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Inicio — Encuéntrame{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>🐾 Encuéntrame</h1>
+  <p>Ayúdanos a reunir familias con sus mascotas en el Eje Cafetero</p>
+</section>
+
+<form id="filtros-form" method="get" action="/">
+  <input type="hidden" name="ciudad" id="input-ciudad" value="{{ ciudad }}">
+  <input type="hidden" name="tipo"   id="input-tipo"   value="{{ tipo }}">
+  <input type="hidden" name="animal" id="input-animal" value="{{ animal }}">
+
+  <!-- Ciudades -->
+  <div class="filtro-bloque">
+    <span class="filtro-label">📍 Ciudad</span>
+    <div class="pill-group">
+      <button type="button" class="pill {% if not ciudad %}pill-active{% endif %}"
+        onclick="setFiltro('ciudad', '')">Todas</button>
+      {% for c in ciudades %}
+        <button type="button" class="pill {% if ciudad == c %}pill-active{% endif %}"
+          onclick="setFiltro('ciudad', '{{ c }}')">{{ c }}</button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Tipo -->
+  <div class="filtro-bloque">
+    <span class="filtro-label">📋 Estado</span>
+    <div class="pill-group">
+      <button type="button" class="pill {% if not tipo %}pill-active{% endif %}"
+        onclick="setFiltro('tipo', '')">Todos</button>
+      <button type="button" class="pill pill-perdido {% if tipo == 'perdido' %}pill-active{% endif %}"
+        onclick="setFiltro('tipo', 'perdido')">🔍 Animalitos perdidos</button>
+      <button type="button" class="pill pill-divagando {% if tipo == 'encontrado_divagando' %}pill-active{% endif %}"
+        onclick="setFiltro('tipo', 'encontrado_divagando')">🏠 Buscamos su familia</button>
+    </div>
+  </div>
+
+  <!-- Animal -->
+  <div class="filtro-bloque">
+    <span class="filtro-label">🐾 Animal</span>
+    <div class="pill-group">
+      <button type="button" class="pill {% if not animal %}pill-active{% endif %}"
+        onclick="setFiltro('animal', '')">Todos</button>
+      <button type="button" class="pill {% if animal == 'perro' %}pill-active{% endif %}"
+        onclick="setFiltro('animal', 'perro')">🐶 Perros</button>
+      <button type="button" class="pill {% if animal == 'gato' %}pill-active{% endif %}"
+        onclick="setFiltro('animal', 'gato')">🐱 Gatos</button>
+    </div>
+  </div>
+</form>
+
+<!-- Contador de resultados -->
+<div class="resultado-header">
+  {% if mascotas %}
+    <p class="resultado-count">{{ mascotas|length }} mascota{{ 's' if mascotas|length != 1 else '' }} encontrada{{ 's' if mascotas|length != 1 else '' }}</p>
+  {% endif %}
+  {% if ciudad or tipo or animal %}
+    <a href="/" class="limpiar-link">✕ Limpiar filtros</a>
+  {% endif %}
+</div>
+
+{% if mascotas %}
+<div class="grid">
+  {% for m in mascotas %}
+  <a href="{{ url_for('detalle', id=m['id']) }}" class="card {% if m['estado'] == 'encontrado' %}card-encontrado{% endif %}">
+
+    {% if m['foto'] %}
+      <div class="card-img-wrap">
+        <img src="{{ url_for('static', filename='uploads/' + m['foto']) }}" alt="Foto de mascota" loading="lazy">
+        {% if m['estado'] == 'encontrado' %}
+          <div class="card-overlay-encontrado">✓ Encontrado</div>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="no-foto">
+        {{ '🐶' if m['animal'] == 'perro' else '🐱' }}
+        {% if m['estado'] == 'encontrado' %}
+          <div class="card-overlay-encontrado">✓ Encontrado</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="card-body">
+      <div class="card-top">
+        {% if m['estado'] == 'encontrado' %}
+          <span class="badge badge-encontrado">✓ Encontrado</span>
+        {% elif m['tipo'] == 'perdido' %}
+          <span class="badge badge-perdido">🔍 Perdido</span>
+        {% else %}
+          <span class="badge badge-divagando">🏠 Buscamos su familia</span>
+        {% endif %}
+        <span class="badge badge-animal">{{ '🐶' if m['animal'] == 'perro' else '🐱' }}</span>
+      </div>
+      <p class="card-ciudad">📍 {{ m['ciudad'] }}</p>
+      <p class="card-desc">{{ m['descripcion'][:75] }}{% if m['descripcion']|length > 75 %}…{% endif %}</p>
+      <p class="card-fecha">{{ m['fecha'] }}</p>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="empty">
+  <div class="empty-icon">{{ '🐶' if animal == 'perro' else ('🐱' if animal == 'gato' else '🐾') }}</div>
+  <p>No hay reportes con esos filtros por ahora.</p>
+  <a href="{{ url_for('reportar') }}" class="btn btn-primary">+ Reportar una mascota</a>
+</div>
+{% endif %}
+
+<script>
+  function setFiltro(campo, valor) {
+    document.getElementById('input-' + campo).value = valor;
+    document.getElementById('filtros-form').submit();
+  }
+</script>
+{% endblock %}

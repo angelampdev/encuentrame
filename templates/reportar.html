@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Reportar mascota — Encuéntrame{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h1>Reportar mascota</h1>
+
+  <form method="post" enctype="multipart/form-data">
+
+    <fieldset>
+      <legend>¿Qué quieres reportar?</legend>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="tipo" value="perdido" required>
+          <span>🔍 Mascota <strong>perdida</strong><br><small>La busco, es mía</small></span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="tipo" value="encontrado_divagando">
+          <span>🏠 <strong>Buscamos su familia</strong><br><small>La encontré, busco a su dueño</small></span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>¿Qué animal es?</legend>
+      <div class="radio-group">
+        <label class="radio-card">
+          <input type="radio" name="animal" value="perro" required>
+          <span>🐶 Perro</span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="animal" value="gato">
+          <span>🐱 Gato</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label for="ciudad">Ciudad</label>
+      <select id="ciudad" name="ciudad" required>
+        <option value="">Selecciona una ciudad...</option>
+        {% for c in ciudades %}
+          <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" name="descripcion" rows="4" required
+        placeholder="Color, tamaño, collar, nombre, señas particulares..."></textarea>
+    </div>
+
+    <div class="field">
+      <label for="contacto">Número de contacto</label>
+      <input type="tel" id="contacto" name="contacto" required
+        placeholder="300 123 4567">
+    </div>
+
+    <div class="field">
+      <label for="foto">Foto (opcional pero muy útil)</label>
+      <input type="file" id="foto" name="foto" accept="image/*">
+      <div id="preview-container" class="preview-container" style="display:none;">
+        <img id="preview" src="" alt="Vista previa">
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full">Publicar reporte</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('foto').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      document.getElementById('preview').src = ev.target.result;
+      document.getElementById('preview-container').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+{% endblock %}

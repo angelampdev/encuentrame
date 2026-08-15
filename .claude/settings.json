@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(gh --version)",
+      "PowerShell(gh auth status)",
+      "PowerShell(Get-Content \"$env:APPDATA\\\\GitHub CLI\\\\hosts.yml\" 2>$null; if \\(-not $?\\) { Get-Content \"$env:LOCALAPPDATA\\\\GitHub CLI\\\\hosts.yml\" 2>$null })",
+      "PowerShell(Get-Content \"$env:LOCALAPPDATA\\\\GitHub CLI\\\\hosts.yml\")"
+    ]
+  }
+}

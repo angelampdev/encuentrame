@@ -1,0 +1,49 @@
+====================================================
+  ENCUÉNTRAME — Instrucciones de arranque
+====================================================
+
+REQUISITOS
+----------
+- Python 3.9 o superior instalado
+- Tener pip disponible en la terminal
+
+INSTALACIÓN (solo la primera vez)
+-----------------------------------
+1. Abre una terminal en esta carpeta
+2. Crea un entorno virtual:
+     python -m venv venv
+
+3. Actívalo:
+     Windows:  venv\Scripts\activate
+     Mac/Linux: source venv/bin/activate
+
+4. Instala las dependencias:
+     pip install -r requirements.txt
+
+ARRANCAR EL SERVIDOR
+---------------------
+Con el entorno virtual activo:
+
+     python app.py
+
+Luego abre en el navegador:  http://127.0.0.1:5000
+
+ESTRUCTURA
+----------
+encuentrame/
+├── app.py           ← servidor principal
+├── database.py      ← base de datos SQLite
+├── pets.db          ← se crea automáticamente al arrancar
+├── requirements.txt
+├── templates/       ← páginas HTML
+└── static/
+    ├── style.css
+    └── uploads/     ← fotos subidas por los usuarios
+
+NOTAS
+-----
+- La base de datos (pets.db) se crea sola al primer arranque.
+- Las fotos se guardan en static/uploads/
+- Para producción, usa gunicorn:
+    pip install gunicorn
+    gunicorn app:app
