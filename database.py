@@ -23,11 +23,11 @@ class ConexionCompat:
 
 def get_connection():
     conexion = pymysql.connect(
-        host=os.environ["MYSQLHOST"],
+        host=os.environ.get("MYSQLHOST"),
         port=int(os.environ.get("MYSQLPORT", 3306)),
-        user=os.environ["MYSQLUSER"],
-        password=os.environ["MYSQLPASSWORD"],
-        database=os.environ["MYSQLDATABASE"],
+        user=os.environ.get("MYSQLUSER"),
+        password=os.environ.get("MYSQLPASSWORD"),
+        database=os.environ.get("MYSQLDATABASE"),
         cursorclass=pymysql.cursors.DictCursor,
     )
     return ConexionCompat(conexion)
@@ -57,3 +57,4 @@ def init_db():
 
     conn.commit()
     conn.close()
+
