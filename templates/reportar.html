@@ -52,9 +52,19 @@
     </div>
 
     <div class="field">
-      <label for="contacto">Número de contacto</label>
-      <input type="tel" id="contacto" name="contacto" required
-        placeholder="300 123 4567">
+      <label for="contacto_tipo">Tipo de contacto (opcional)</label>
+      <select id="contacto_tipo" name="contacto_tipo">
+        <option value="numero">📱 Número de teléfono / WhatsApp</option>
+        <option value="instagram">📷 Instagram</option>
+        <option value="tiktok">🎵 TikTok</option>
+        <option value="facebook">👤 Facebook</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="contacto">Número o usuario</label>
+      <input type="text" id="contacto" name="contacto"
+        placeholder="300 123 4567 o @usuario">
     </div>
 
     <div class="field">

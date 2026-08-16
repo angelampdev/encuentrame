@@ -30,13 +30,23 @@
       <h2>Descripción</h2>
       <p>{{ mascota['descripcion'] }}</p>
 
-      <h2>Contacto</h2>
-      <p class="detalle-contacto">
-        <a href="https://wa.me/57{{ mascota['contacto']|replace(' ', '') }}" target="_blank" class="btn btn-whatsapp">
-          📱 Escribir por WhatsApp
-        </a>
-        <span class="contacto-num">{{ mascota['contacto'] }}</span>
-      </p>
+      {% if mascota['contacto'] %}
+        <h2>Contacto</h2>
+        <p class="detalle-contacto">
+          {% if mascota['contacto_tipo'] == 'numero' %}
+            <a href="https://wa.me/57{{ mascota['contacto']|replace(' ', '') }}" target="_blank" class="btn btn-whatsapp">
+              📱 Escribir por WhatsApp
+            </a>
+            <span class="contacto-num">{{ mascota['contacto'] }}</span>
+          {% elif mascota['contacto_tipo'] == 'instagram' %}
+            <span class="contacto-num">📷 Instagram: {{ mascota['contacto'] }}</span>
+          {% elif mascota['contacto_tipo'] == 'tiktok' %}
+            <span class="contacto-num">🎵 TikTok: {{ mascota['contacto'] }}</span>
+          {% elif mascota['contacto_tipo'] == 'facebook' %}
+            <span class="contacto-num">👤 Facebook: {{ mascota['contacto'] }}</span>
+          {% endif %}
+        </p>
+      {% endif %}
 
       {% if mascota['estado'] == 'encontrado' and mascota['desc_cierre'] %}
         <div class="cierre-box">
@@ -50,12 +60,19 @@
           <h2>¿Ya fue encontrado?</h2>
           <p>Si esta mascota ya fue encontrada, ayúdanos a actualizar el reporte.</p>
           <form method="post" action="{{ url_for('marcar_encontrado', id=mascota['id']) }}">
-            <textarea name="desc_cierre" rows="3"
-              placeholder="Cuéntanos cómo fue el reencuentro (opcional)..."></textarea>
+            <textarea name="desc_cierre" rows="3" required
+              placeholder="Cuéntanos cómo fue el reencuentro..."></textarea>
             <button type="submit" class="btn btn-success">✓ Marcar como encontrado</button>
           </form>
         </div>
       {% endif %}
+
+      <div class="eliminar-form">
+        <form method="post" action="{{ url_for('eliminar', id=mascota['id']) }}"
+          onsubmit="return confirm('¿Seguro que quieres eliminar este reporte? Esta acción no se puede deshacer.');">
+          <button type="submit" class="btn btn-danger">🗑️ Eliminar reporte</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

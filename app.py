@@ -20,6 +20,9 @@ MAX_IMAGE_SIZE = (800, 800)
 CIUDADES = ["Armenia", "Pereira", "Dosquebradas", "Cali", "Chocó"]
 
 
+CONTACTO_TIPOS = {"numero", "instagram", "tiktok", "facebook"}
+
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -77,9 +80,12 @@ def reportar():
         ciudad = request.form.get("ciudad")
         descripcion = request.form.get("descripcion", "").strip()
         contacto = request.form.get("contacto", "").strip()
+        contacto_tipo = request.form.get("contacto_tipo", "numero")
+        if contacto_tipo not in CONTACTO_TIPOS:
+            contacto_tipo = "numero"
         foto_file = request.files.get("foto")
 
-        if not all([tipo, animal, ciudad, descripcion, contacto]):
+        if not all([tipo, animal, ciudad, descripcion]):
             flash("Por favor completa todos los campos.", "error")
             return render_template("reportar.html", ciudades=CIUDADES)
 
@@ -87,8 +93,8 @@ def reportar():
 
         conn = get_connection()
         conn.execute(
-            "INSERT INTO mascotas (tipo, animal, ciudad, descripcion, contacto, foto) VALUES (?,?,?,?,?,?)",
-            (tipo, animal, ciudad, descripcion, contacto, filename)
+            "INSERT INTO mascotas (tipo, animal, ciudad, descripcion, contacto, contacto_tipo, foto) VALUES (?,?,?,?,?,?,?)",
+            (tipo, animal, ciudad, descripcion, contacto, contacto_tipo, filename)
         )
         conn.commit()
         conn.close()
@@ -112,6 +118,10 @@ def detalle(id):
 @app.route("/mascota/<int:id>/encontrado", methods=["POST"])
 def marcar_encontrado(id):
     desc_cierre = request.form.get("desc_cierre", "").strip()
+    if not desc_cierre:
+        flash("Por favor cuéntanos cómo fue el reencuentro antes de marcarlo como encontrado.", "error")
+        return redirect(url_for("detalle", id=id))
+
     conn = get_connection()
     conn.execute(
         "UPDATE mascotas SET estado = 'encontrado', desc_cierre = ? WHERE id = ?",
@@ -121,6 +131,23 @@ def marcar_encontrado(id):
     conn.close()
     flash("¡Qué alegría! Mascota marcada como encontrada.", "success")
     return redirect(url_for("detalle", id=id))
+
+
+@app.route("/mascota/<int:id>/eliminar", methods=["POST"])
+def eliminar(id):
+    conn = get_connection()
+    mascota = conn.execute("SELECT foto FROM mascotas WHERE id = ?", (id,)).fetchone()
+    conn.execute("DELETE FROM mascotas WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+
+    if mascota and mascota["foto"]:
+        foto_path = os.path.join(UPLOAD_FOLDER, mascota["foto"])
+        if os.path.exists(foto_path):
+            os.remove(foto_path)
+
+    flash("Reporte eliminado.", "success")
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

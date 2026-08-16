@@ -52,6 +52,7 @@ footer { text-align: center; padding: 32px 20px; color: var(--gris); font-size: 
 .btn-secondary { background: var(--gris-claro); color: var(--texto); border: 1px solid var(--borde); }
 .btn-success { background: var(--verde); color: white; }
 .btn-whatsapp { background: var(--azul-whatsapp); color: white; }
+.btn-danger { background: var(--rojo); color: white; }
 .btn-link { background: transparent; color: var(--gris); padding: 10px 12px; }
 .btn-full { width: 100%; text-align: center; padding: 14px; font-size: 1rem; }
 
@@ -210,6 +211,8 @@ legend { font-weight: 600; padding: 0 8px; }
   width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--borde);
   margin: 10px 0; resize: vertical;
 }
+
+.eliminar-form { border-top: 1px solid var(--borde); padding-top: 16px; margin-top: 16px; }
 
 /* ===== Responsive ===== */
 @media (max-width: 480px) {
