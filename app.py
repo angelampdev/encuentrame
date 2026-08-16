@@ -142,7 +142,8 @@ def reportar():
         flash("¡Reporte publicado exitosamente!", "success")
         return redirect(url_for("index"))
 
-    return render_template("reportar.html", ciudades=CIUDADES)
+    return render_template("reportar.html", ciudades=CIUDADES,
+                           departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES)
 
 
 @app.route("/mascota/<int:id>")
