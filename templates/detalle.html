@@ -7,7 +7,7 @@
 
   <div class="detalle-card">
     {% if mascota['foto'] %}
-      <img class="detalle-foto" src="{{ url_for('static', filename='uploads/' + mascota['foto']) }}" alt="Foto">
+      <img class="detalle-foto" src="{{ url_for('uploads', filename=mascota['foto']) }}" alt="Foto">
     {% else %}
       <div class="no-foto no-foto-lg">{{ '🐶' if mascota['animal'] == 'perro' else '🐱' }}</div>
     {% endif %}

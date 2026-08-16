@@ -69,7 +69,7 @@
 
     {% if m['foto'] %}
       <div class="card-img-wrap">
-        <img src="{{ url_for('static', filename='uploads/' + m['foto']) }}" alt="Foto de mascota" loading="lazy">
+        <img src="{{ url_for('uploads', filename=m['foto']) }}" alt="Foto de mascota" loading="lazy">
         {% if m['estado'] == 'encontrado' %}
           <div class="card-overlay-encontrado">✓ Encontrado</div>
         {% endif %}

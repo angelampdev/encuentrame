@@ -2,8 +2,7 @@
 pets.db
 
 # Fotos subidas por usuarios
-static/uploads/*
-!static/uploads/.gitkeep
+uploads/
 
 # Entorno virtual Python
 venv/

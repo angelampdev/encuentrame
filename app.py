@@ -1,5 +1,8 @@
+import io
 import os
 import uuid
+from datetime import date
+import boto3
 from flask import Flask, render_template, request, redirect, url_for, flash
 from database import get_connection, init_db
 
@@ -14,8 +17,17 @@ app.secret_key = "encuentrame-secret-2024"
 
 init_db()
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "static", "uploads")
+BUCKET = os.environ.get("BUCKET")
+s3 = boto3.client(
+    "s3",
+    region_name=os.environ.get("REGION"),
+    endpoint_url=os.environ.get("ENDPOINT"),
+    aws_access_key_id=os.environ.get("ACCESS_KEY_ID"),
+    aws_secret_access_key=os.environ.get("SECRET_ACCESS_KEY"),
+)
+
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+FORMATOS_PILLOW = {"png": "PNG", "jpg": "JPEG", "jpeg": "JPEG", "webp": "WEBP"}
 MAX_IMAGE_SIZE = (800, 800)
 CIUDADES = ["Armenia", "Pereira", "Dosquebradas", "Cali", "Chocó"]
 
@@ -34,14 +46,26 @@ def save_photo(file):
         return None
     ext = file.filename.rsplit(".", 1)[1].lower()
     filename = f"{uuid.uuid4().hex}.{ext}"
-    path = os.path.join(UPLOAD_FOLDER, filename)
+
     if PILLOW_DISPONIBLE:
         img = Image.open(file)
         img.thumbnail(MAX_IMAGE_SIZE)
-        img.save(path, optimize=True, quality=85)
+        buffer = io.BytesIO()
+        img.save(buffer, format=FORMATOS_PILLOW[ext], optimize=True, quality=85)
+        buffer.seek(0)
+        s3.upload_fileobj(buffer, BUCKET, filename)
     else:
-        file.save(path)
+        file.stream.seek(0)
+        s3.upload_fileobj(file.stream, BUCKET, filename)
     return filename
+
+
+@app.route("/uploads/<path:filename>")
+def uploads(filename):
+    url = s3.generate_presigned_url(
+        "get_object", Params={"Bucket": BUCKET, "Key": filename}, ExpiresIn=3600
+    )
+    return redirect(url)
 
 
 @app.route("/")
@@ -93,8 +117,8 @@ def reportar():
 
         conn = get_connection()
         conn.execute(
-            "INSERT INTO mascotas (tipo, animal, ciudad, descripcion, contacto, contacto_tipo, foto) VALUES (?,?,?,?,?,?,?)",
-            (tipo, animal, ciudad, descripcion, contacto, contacto_tipo, filename)
+            "INSERT INTO mascotas (tipo, animal, ciudad, descripcion, contacto, contacto_tipo, foto, fecha) VALUES (?,?,?,?,?,?,?,?)",
+            (tipo, animal, ciudad, descripcion, contacto, contacto_tipo, filename, date.today())
         )
         conn.commit()
         conn.close()
@@ -142,9 +166,7 @@ def eliminar(id):
     conn.close()
 
     if mascota and mascota["foto"]:
-        foto_path = os.path.join(UPLOAD_FOLDER, mascota["foto"])
-        if os.path.exists(foto_path):
-            os.remove(foto_path)
+        s3.delete_object(Bucket=BUCKET, Key=mascota["foto"])
 
     flash("Reporte eliminado.", "success")
     return redirect(url_for("index"))
