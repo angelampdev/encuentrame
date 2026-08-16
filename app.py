@@ -33,6 +33,7 @@ DEPARTAMENTOS = {
     "Valle del Cauca": ["Cali", "Otras"],
 }
 OTRAS_CIUDADES = ["Chocó"]
+UBICACION_DESCONOCIDA = "Ubicación no conocida"
 
 CIUDADES = [c for ciudades in DEPARTAMENTOS.values() for c in ciudades] + OTRAS_CIUDADES
 
@@ -107,6 +108,7 @@ def index():
 
     return render_template("index.html", mascotas=mascotas, ciudades=CIUDADES,
                            departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES,
+                           ubicacion_desconocida=UBICACION_DESCONOCIDA,
                            ciudad=ciudad, departamento=departamento, tipo=tipo, animal=animal)
 
 
@@ -127,7 +129,8 @@ def reportar():
         if not all([tipo, animal, ciudad, descripcion]):
             flash("Por favor completa todos los campos.", "error")
             return render_template("reportar.html", ciudades=CIUDADES,
-                                   departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES)
+                                   departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES,
+                                   ubicacion_desconocida=UBICACION_DESCONOCIDA)
 
         filename = save_photo(foto_file)
 
@@ -143,7 +146,8 @@ def reportar():
         return redirect(url_for("index"))
 
     return render_template("reportar.html", ciudades=CIUDADES,
-                           departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES)
+                           departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES,
+                           ubicacion_desconocida=UBICACION_DESCONOCIDA)
 
 
 @app.route("/mascota/<int:id>")

@@ -30,6 +30,15 @@
     </div>
   </div>
 
+  <!-- Ubicación no conocida (no es departamento ni ciudad) -->
+  <div class="filtro-bloque">
+    <span class="filtro-label">❓ Ubicación</span>
+    <div class="pill-group">
+      <button type="button" class="pill {% if ciudad == ubicacion_desconocida %}pill-active{% endif %}"
+        onclick="setUbicacionDesconocida('{{ ubicacion_desconocida }}')">{{ ubicacion_desconocida }}</button>
+    </div>
+  </div>
+
   <!-- Ciudad (solo aparece tras elegir un departamento) -->
   {% if departamento %}
   <div class="filtro-bloque filtro-bloque-depto">
@@ -139,6 +148,11 @@
   function setDepartamento(depto) {
     document.getElementById('input-departamento').value = depto;
     document.getElementById('input-ciudad').value = '';
+    document.getElementById('filtros-form').submit();
+  }
+  function setUbicacionDesconocida(valor) {
+    document.getElementById('input-ciudad').value = valor;
+    document.getElementById('input-departamento').value = '';
     document.getElementById('filtros-form').submit();
   }
 </script>
