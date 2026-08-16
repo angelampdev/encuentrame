@@ -18,12 +18,30 @@
     <div class="pill-group">
       <button type="button" class="pill {% if not ciudad %}pill-active{% endif %}"
         onclick="setFiltro('ciudad', '')">Todas</button>
-      {% for c in ciudades %}
+    </div>
+  </div>
+  {% for depto, ciudades_depto in departamentos.items() %}
+  <div class="filtro-bloque filtro-bloque-depto">
+    <span class="filtro-label filtro-label-depto">{{ depto }}</span>
+    <div class="pill-group">
+      {% for c in ciudades_depto %}
         <button type="button" class="pill {% if ciudad == c %}pill-active{% endif %}"
           onclick="setFiltro('ciudad', '{{ c }}')">{{ c }}</button>
       {% endfor %}
     </div>
   </div>
+  {% endfor %}
+  {% if otras_ciudades %}
+  <div class="filtro-bloque filtro-bloque-depto">
+    <span class="filtro-label filtro-label-depto">Otras</span>
+    <div class="pill-group">
+      {% for c in otras_ciudades %}
+        <button type="button" class="pill {% if ciudad == c %}pill-active{% endif %}"
+          onclick="setFiltro('ciudad', '{{ c }}')">{{ c }}</button>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 
   <!-- Tipo -->
   <div class="filtro-bloque">

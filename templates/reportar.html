@@ -39,9 +39,20 @@
       <label for="ciudad">Ciudad</label>
       <select id="ciudad" name="ciudad" required>
         <option value="">Selecciona una ciudad...</option>
-        {% for c in ciudades %}
-          <option value="{{ c }}">{{ c }}</option>
+        {% for depto, ciudades_depto in departamentos.items() %}
+          <optgroup label="{{ depto }}">
+            {% for c in ciudades_depto %}
+              <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+          </optgroup>
         {% endfor %}
+        {% if otras_ciudades %}
+          <optgroup label="Otras">
+            {% for c in otras_ciudades %}
+              <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+          </optgroup>
+        {% endif %}
       </select>
     </div>
 

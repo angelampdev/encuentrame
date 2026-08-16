@@ -77,6 +77,9 @@ footer { text-align: center; padding: 32px 20px; color: var(--gris); font-size: 
 .filtro-label { font-size: .82rem; font-weight: 700; color: var(--gris); min-width: 70px; white-space: nowrap; }
 .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
 
+.filtro-bloque-depto { padding-left: 12px; margin-top: -6px; }
+.filtro-label-depto { color: var(--naranja); font-size: .78rem; }
+
 .pill {
   padding: 6px 16px; border-radius: 999px; border: 1.5px solid var(--borde);
   background: white; color: var(--texto); font-size: .88rem; font-weight: 500;

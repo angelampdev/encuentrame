@@ -27,7 +27,14 @@ s3 = boto3.client(
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 FORMATOS_PILLOW = {"png": "PNG", "jpg": "JPEG", "jpeg": "JPEG", "webp": "WEBP"}
 MAX_IMAGE_SIZE = (800, 800)
-CIUDADES = ["Armenia", "Pereira", "Dosquebradas", "Cali", "Chocó"]
+DEPARTAMENTOS = {
+    "Quindío": ["Armenia"],
+    "Risaralda": ["Pereira", "Dosquebradas"],
+    "Valle del Cauca": ["Cali"],
+}
+OTRAS_CIUDADES = ["Chocó"]
+
+CIUDADES = [c for ciudades in DEPARTAMENTOS.values() for c in ciudades] + OTRAS_CIUDADES
 
 
 CONTACTO_TIPOS = {"numero", "instagram", "tiktok", "facebook"}
@@ -92,6 +99,7 @@ def index():
     conn.close()
 
     return render_template("index.html", mascotas=mascotas, ciudades=CIUDADES,
+                           departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES,
                            ciudad=ciudad, tipo=tipo, animal=animal)
 
 
@@ -111,7 +119,8 @@ def reportar():
 
         if not all([tipo, animal, ciudad, descripcion]):
             flash("Por favor completa todos los campos.", "error")
-            return render_template("reportar.html", ciudades=CIUDADES)
+            return render_template("reportar.html", ciudades=CIUDADES,
+                                   departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES)
 
         filename = save_photo(foto_file)
 
