@@ -55,6 +55,24 @@
         </div>
       {% endif %}
 
+      {% if mascota['estado'] == 'activo' and mascota['foto'] %}
+        {% set tipo_opuesto = 'encontrado_divagando' if mascota['tipo'] == 'perdido' else 'perdido' %}
+        {% set enlace_foto = url_for('static', filename='uploads/' + mascota['foto'], _external=True) %}
+        {% set enlace_lista = url_for('index', tipo=tipo_opuesto, _external=True) %}
+        {% set prompt_ia -%}
+Estoy tratando de encontrar coincidencias para esta mascota {{ 'perdida' if mascota['tipo'] == 'perdido' else 'que buscamos ubicar a su familia' }}: {{ enlace_foto }}
+
+¿Puedes revisar los reportes en esta página: {{ enlace_lista }} y decirme cuáles fotos se parecen más a esta (raza, color, tamaño, marcas particulares), y por qué?
+{%- endset %}
+        <div class="ia-ayuda">
+          <h2>🤖 Buscar con ayuda de IA</h2>
+          <p>Copia este mensaje y pégalo en ChatGPT, Claude u otra IA que uses, para buscar coincidencias con tus propias fotos.</p>
+          <textarea id="prompt-ia" rows="6" readonly>{{ prompt_ia }}</textarea>
+          <button type="button" class="btn btn-secondary" onclick="copiarPromptIA()">📋 Copiar</button>
+          <span id="copiado-msg" class="copiado-msg">¡Copiado!</span>
+        </div>
+      {% endif %}
+
       {% if mascota['estado'] == 'activo' %}
         <div class="encontrado-form">
           <h2>¿Ya fue encontrado?</h2>
@@ -76,4 +94,15 @@
     </div>
   </div>
 </div>
+
+<script>
+  function copiarPromptIA() {
+    const texto = document.getElementById('prompt-ia');
+    const msg = document.getElementById('copiado-msg');
+    navigator.clipboard.writeText(texto.value).then(function() {
+      msg.classList.add('copiado-msg-visible');
+      setTimeout(function() { msg.classList.remove('copiado-msg-visible'); }, 2000);
+    });
+  }
+</script>
 {% endblock %}

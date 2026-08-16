@@ -212,6 +212,16 @@ legend { font-weight: 600; padding: 0 8px; }
   margin: 10px 0; resize: vertical;
 }
 
+.ia-ayuda { border-top: 1px solid var(--borde); padding-top: 16px; }
+.ia-ayuda textarea {
+  width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--borde);
+  margin: 10px 0; resize: vertical; font-family: inherit; background: var(--gris-claro);
+}
+.copiado-msg {
+  color: var(--verde); font-weight: 600; margin-left: 10px; opacity: 0; transition: opacity .2s;
+}
+.copiado-msg-visible { opacity: 1; }
+
 .eliminar-form { border-top: 1px solid var(--borde); padding-top: 16px; margin-top: 16px; }
 
 /* ===== Responsive ===== */
