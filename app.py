@@ -28,9 +28,9 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 FORMATOS_PILLOW = {"png": "PNG", "jpg": "JPEG", "jpeg": "JPEG", "webp": "WEBP"}
 MAX_IMAGE_SIZE = (800, 800)
 DEPARTAMENTOS = {
-    "Quindío": ["Armenia"],
-    "Risaralda": ["Pereira", "Dosquebradas"],
-    "Valle del Cauca": ["Cali"],
+    "Quindío": ["Armenia", "Calarcá", "Circasia", "Otras"],
+    "Risaralda": ["Pereira", "Dosquebradas", "Otras"],
+    "Valle del Cauca": ["Cali", "Otras"],
 }
 OTRAS_CIUDADES = ["Chocó"]
 
@@ -77,6 +77,7 @@ def uploads(filename):
 def index():
     init_db()
     ciudad = request.args.get("ciudad", "")
+    departamento = request.args.get("departamento", "")
     tipo = request.args.get("tipo", "")
     animal = request.args.get("animal", "")
 
@@ -87,6 +88,12 @@ def index():
     if ciudad:
         query += " AND ciudad = ?"
         params.append(ciudad)
+    elif departamento:
+        ciudades_dep = DEPARTAMENTOS.get(departamento) or (OTRAS_CIUDADES if departamento == "Otras" else [])
+        if ciudades_dep:
+            placeholders = ",".join(["?"] * len(ciudades_dep))
+            query += f" AND ciudad IN ({placeholders})"
+            params.extend(ciudades_dep)
     if tipo:
         query += " AND tipo = ?"
         params.append(tipo)
@@ -100,7 +107,7 @@ def index():
 
     return render_template("index.html", mascotas=mascotas, ciudades=CIUDADES,
                            departamentos=DEPARTAMENTOS, otras_ciudades=OTRAS_CIUDADES,
-                           ciudad=ciudad, tipo=tipo, animal=animal)
+                           ciudad=ciudad, departamento=departamento, tipo=tipo, animal=animal)
 
 
 @app.route("/reportar", methods=["GET", "POST"])
