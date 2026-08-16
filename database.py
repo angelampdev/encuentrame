@@ -2,6 +2,7 @@ import os
 import pymysql
 import pymysql.cursors
 
+_initialized = False
 
 class ConexionCompat:
     """Adapta pymysql para que conn.execute(...) funcione como antes con sqlite3."""
@@ -23,17 +24,21 @@ class ConexionCompat:
 
 def get_connection():
     conexion = pymysql.connect(
-        host=os.environ.get("MYSQLHOST"),
+        host=os.environ.get("MYSQLHOST", "mysql.railway.internal"),
         port=int(os.environ.get("MYSQLPORT", 3306)),
-        user=os.environ.get("MYSQLUSER"),
-        password=os.environ.get("MYSQLPASSWORD"),
-        database=os.environ.get("MYSQLDATABASE"),
+        user=os.environ.get("MYSQLUSER", "root"),
+        password=os.environ.get("MYSQLPASSWORD", ""),
+        database=os.environ.get("MYSQLDATABASE", "railway"),
         cursorclass=pymysql.cursors.DictCursor,
     )
     return ConexionCompat(conexion)
 
 
 def init_db():
+    global _initialized
+    if _initialized:
+        return
+    
     conn = get_connection()
     conn.execute("""
         CREATE TABLE IF NOT EXISTS mascotas (
@@ -57,4 +62,5 @@ def init_db():
 
     conn.commit()
     conn.close()
+    _initialized = True
 
