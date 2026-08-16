@@ -15,8 +15,6 @@ except ImportError:
 app = Flask(__name__)
 app.secret_key = "encuentrame-secret-2024"
 
-init_db()
-
 BUCKET = os.environ.get("BUCKET")
 s3 = boto3.client(
     "s3",
@@ -70,6 +68,7 @@ def uploads(filename):
 
 @app.route("/")
 def index():
+    init_db()
     ciudad = request.args.get("ciudad", "")
     tipo = request.args.get("tipo", "")
     animal = request.args.get("animal", "")
@@ -98,6 +97,7 @@ def index():
 
 @app.route("/reportar", methods=["GET", "POST"])
 def reportar():
+    init_db()
     if request.method == "POST":
         tipo = request.form.get("tipo")
         animal = request.form.get("animal")
@@ -131,6 +131,7 @@ def reportar():
 
 @app.route("/mascota/<int:id>")
 def detalle(id):
+    init_db()
     conn = get_connection()
     mascota = conn.execute("SELECT * FROM mascotas WHERE id = ?", (id,)).fetchone()
     conn.close()
@@ -141,6 +142,7 @@ def detalle(id):
 
 @app.route("/mascota/<int:id>/encontrado", methods=["POST"])
 def marcar_encontrado(id):
+    init_db()
     desc_cierre = request.form.get("desc_cierre", "").strip()
     if not desc_cierre:
         flash("Por favor cuéntanos cómo fue el reencuentro antes de marcarlo como encontrado.", "error")
@@ -159,6 +161,7 @@ def marcar_encontrado(id):
 
 @app.route("/mascota/<int:id>/eliminar", methods=["POST"])
 def eliminar(id):
+    init_db()
     conn = get_connection()
     mascota = conn.execute("SELECT foto FROM mascotas WHERE id = ?", (id,)).fetchone()
     conn.execute("DELETE FROM mascotas WHERE id = ?", (id,))
@@ -175,3 +178,4 @@ def eliminar(id):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
